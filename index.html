@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Our Journey | Thanjai</title>
+    <title>Love B</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -335,7 +335,6 @@
             text-align: center; 
         }
 
-        /* 3️⃣ แก้ปุ่ม A B C D ให้พอดีจอ */
         .choice-box {
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -380,7 +379,6 @@
             z-index: 1; 
         }
 
-        /* 4️⃣ big heart ใหญ่เกิน -> เปลี่ยนเป็นไซส์พอดี */
         .big-heart {
             position: absolute;
             top: 50%;
@@ -491,7 +489,7 @@
             to { transform: translateY(-100vh); opacity: 0; }
         }
 
-        /* 4️⃣ แก้ popup ไม่ให้สูงเกิน (Glass Card) */
+        /* 💎 Glass Card UI */
         .premium-popup {
             position: absolute; 
             top: 50%; 
@@ -635,8 +633,13 @@
                 </div>
             </div>
         </div>
-    </div> <script>
+    </div> 
+
+    <script>
         const appContainer = document.getElementById("app-container"); 
+        
+        // 🔒 ตัวแปรป้องกัน Ghost Click
+        let canSlide = false; 
 
         document.addEventListener("DOMContentLoaded", () => {
             const loader = document.getElementById('loader');
@@ -655,6 +658,7 @@
         let introIndex = 0;
         let isIntroFinished = false;
         let typeTimeout;
+        let introClicked = false;
 
         function typeIntro() {
             if (introIndex < introMessage.length) {
@@ -672,7 +676,11 @@
             }
         }
 
+        // 🔒 บังคับให้รอพิมพ์เสร็จก่อนถึงจะกดข้ามได้
         document.getElementById("intro").addEventListener("click", () => {
+            if(!isIntroFinished || introClicked) return; 
+            introClicked = true;
+            
             clearTimeout(typeTimeout); 
             const intro = document.getElementById("intro");
             intro.style.opacity = "0";
@@ -844,6 +852,11 @@
             playMusic();
             startStoryProgress(current);
             startTyping(current);
+
+            // 🔒 กัน Ghost Click: ปลดล็อกให้กดเปลี่ยนสไลด์ได้หลังจาก 1 วินาที
+            setTimeout(() => {
+                canSlide = true;
+            }, 1000);
         };
 
         function startTyping(index) {
@@ -933,13 +946,13 @@
 
         let startX = 0;
         document.addEventListener("touchstart", e => {
-            if(document.getElementById("nameOverlay")?.style.display !== "none" || document.getElementById("intro")) return;
+            if(!canSlide || accepted) return;
             clearTimeout(slideTimer); 
             startX = e.touches[0].clientX;
         });
 
         document.addEventListener("touchend", e => {
-            if(document.getElementById("nameOverlay")?.style.display !== "none" || document.getElementById("intro")) return;
+            if(!canSlide || accepted) return;
             let endX = e.changedTouches[0].clientX; 
             let diffX = startX - endX;
             if (diffX > 50 && current < slides.length - 1) { nextSlide(current + 1); } 
@@ -948,7 +961,7 @@
         });
 
         document.addEventListener("click", e => {
-            if(document.getElementById("nameOverlay")?.style.display !== "none" || document.getElementById("intro") || accepted) return;
+            if(!canSlide || accepted) return;
             playMusic();
             if(e.target.closest('button') || e.target.tagName.toLowerCase() === 'input') return; 
             
@@ -1066,6 +1079,12 @@
                 hLeft.classList.add("fly");
                 hRight.classList.add("fly");
 
+                // ⏰ หยุดเวลาและแสดงเวลาคบกัน
+                clearInterval(timerInterval);
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+                const timerDisplay = document.getElementById('timer-display');
+
                 setTimeout(() => {
                     document.getElementById("loveSound").play().catch(()=>{});
                     document.getElementById("boom").play().catch(()=>{}); 
@@ -1142,14 +1161,8 @@
                         fill:"forwards"
                     });
 
-                    // ⏰ หยุดเวลาและแสดงเวลาคบกัน
-                    clearInterval(timerInterval);
-                    const now = new Date();
-                    const dateString = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-                    const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
-                    
-                    const timerDisplay = document.getElementById('timer-display');
-                    timerDisplay.innerHTML = `เราเป็นแฟนกันเมื่อ ${dateString} เวลา ${timeString} 💖`;
+                    // ⏰ เด้งนาฬิกาโชว์เวลาที่ตกลงเป็นแฟนที่ด้านบน
+                    timerDisplay.innerHTML = `เราเป็นแฟนกันตอน ${timeString} 💖`;
                     timerDisplay.style.opacity = '1';
                     timerDisplay.style.fontSize = 'clamp(0.85rem, 3vw, 1.1rem)';
                     timerDisplay.style.transform = 'scale(1.1)';
@@ -1162,6 +1175,7 @@
                         }
                     }, 1000);
 
+                    // 💎 โชว์ Glass Card กลางจอ 
                     setTimeout(() => {
                         let box = document.createElement("div");
                         box.className = "premium-popup";
@@ -1181,7 +1195,7 @@
                         }
                     }, 2500);
 
-                    // 5️⃣ ขยับข้อความไปด้านบนสุด 
+                    // 5️⃣ ขยับข้อความไปด้านบนสุด
                     setTimeout(()=>{
                         let text = document.createElement("div");
                         text.innerHTML = "ว้ายๆๆ โดนผมจีบติดแล้วนะครับ 😳";
