@@ -2,8 +2,8 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Love</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Our Journey | Thanjai</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -17,13 +17,12 @@
             box-sizing: border-box; 
         }
 
-        /* 1️⃣ จัดระเบียบ Body ให้รองรับ Container (แก้ขอบล้น) */
         body {
             margin: 0;
-            background: #111; /* สีพื้นหลังนอกมือถือ (เวลาเปิดในคอม) */
+            background: #111; 
             font-family: 'Kanit', sans-serif;
             color: white;
-            overflow: hidden; /* 6️⃣ ปิด scroll มือถือ */
+            overflow: hidden; 
             touch-action: manipulation; 
             display: flex;
             justify-content: center;
@@ -40,12 +39,12 @@
             position: relative;
             background: var(--bg-dark);
             overflow: hidden;
-            box-shadow: 0 0 30px rgba(255, 133, 162, 0.1); /* ขอบเงาบางๆ เวลาดูในคอม */
+            box-shadow: 0 0 30px rgba(255, 133, 162, 0.1); 
         }
 
         /* 🎬 Intro Screen CSS */
         .intro-screen {
-            position: absolute; /* เปลี่ยนจาก fixed เพื่อให้อยู่ใน Container */
+            position: absolute; 
             top: 0;
             left: 0;
             width: 100%;
@@ -187,16 +186,18 @@
             color: var(--love-pink); 
             letter-spacing: 1px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
+            transition: opacity 0.5s ease, transform 0.5s ease, font-size 0.5s ease;
         }
 
+        /* 1️⃣ ซ่อน Slide Container ไว้ก่อน */
         .slide-container { 
-            height: 100%; 
+            height: 100vh; 
             width: 100%; 
             position: relative; 
             display: none; 
         }
 
-        /* 🎥 Cinematic Fade */
+        /* 🎥 เปลี่ยน Effect การเปลี่ยน Slide ให้เป็น Cinematic Fade */
         .slide {
             position: absolute; 
             top: 0; 
@@ -222,7 +223,7 @@
             pointer-events: auto; 
         }
 
-        /* 📝 Center Slide */
+        /* 📝 Class สำหรับ Slide ไม่มีรูป ให้อยู่กลางจอ */
         .center-slide {
             justify-content: center;
             align-items: center;
@@ -385,7 +386,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: clamp(10rem, 45vw, 18rem); /* 🔧 ย่อหัวใจลงให้พอดีจอ */
+            font-size: clamp(10rem, 45vw, 18rem); 
             opacity: 0.85; 
             z-index: 1;
             text-align: center;
@@ -499,13 +500,13 @@
             background: rgba(0, 0, 0, 0.45); 
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            padding: 20px; /* 🔧 ลด Padding ไม่ให้ล้นจอ */
+            padding: 20px; 
             border-radius: 20px; 
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             width: 90%; 
-            max-width: 90%; /* 🔧 จำกัดไม่ให้ล้นขอบจอ 420px */
+            max-width: 90%; 
             opacity: 0; 
             animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
@@ -635,7 +636,7 @@
             </div>
         </div>
     </div> <script>
-        const appContainer = document.getElementById("app-container"); // ใช้อ้างอิงการใส่ Element ใหม่
+        const appContainer = document.getElementById("app-container"); 
 
         document.addEventListener("DOMContentLoaded", () => {
             const loader = document.getElementById('loader');
@@ -653,6 +654,7 @@
         const introMessage = "วันนี้มีอะไรอยากเล่าให้ฟัง...\n\nเกี่ยวกับวันแรกที่เราเจอกัน\n\nและทุกอย่างหลังจากนั้น";
         let introIndex = 0;
         let isIntroFinished = false;
+        let typeTimeout;
 
         function typeIntro() {
             if (introIndex < introMessage.length) {
@@ -663,7 +665,7 @@
                     document.getElementById("introText").innerHTML += char;
                 }
                 introIndex++;
-                setTimeout(typeIntro, 80);
+                typeTimeout = setTimeout(typeIntro, 80);
             } else {
                 isIntroFinished = true;
                 document.getElementById("tapText").style.opacity = "1";
@@ -671,15 +673,21 @@
         }
 
         document.getElementById("intro").addEventListener("click", () => {
-            if(!isIntroFinished) return; 
-            
+            clearTimeout(typeTimeout); 
             const intro = document.getElementById("intro");
             intro.style.opacity = "0";
             
             setTimeout(() => {
                 intro.remove();
                 document.getElementById("nameOverlay").style.display = "flex";
-            }, 600);
+            }, 400);
+        });
+
+        document.getElementById("nameInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                document.getElementById("startBtn").click();
+            }
         });
 
         // 🌌 JS ดาววิบวับ + ดาวตก Parallax
@@ -869,6 +877,7 @@
         }
 
         const startDate = new Date("February 14, 2026 10:30:00").getTime();
+        
         function updateTimer() {
             const now = new Date().getTime();
             const diff = Math.max(0, now - startDate); 
@@ -881,7 +890,8 @@
                 timerDisplay.innerHTML = `เราเจอกันมานาน ${d} วัน ${h} ชม. ${m} นาที ${s} วินาที แล้วนะ`; 
             }
         }
-        setInterval(updateTimer, 1000);
+        
+        let timerInterval = setInterval(updateTimer, 1000);
 
         function startStoryProgress(index) {
             clearTimeout(slideTimer);
@@ -912,20 +922,24 @@
             startTyping(current); 
             if (navigator.vibrate) { navigator.vibrate(30); }
             
+            // ซ่อนนาฬิกาเมื่อถึงหน้าสุดท้าย
             if(current === slides.length - 1) {
                 document.getElementById("heartbeat").play().catch(()=>{});
+                document.getElementById('timer-display').style.opacity = '0'; 
+            } else {
+                document.getElementById('timer-display').style.opacity = '1'; 
             }
         }
 
         let startX = 0;
         document.addEventListener("touchstart", e => {
-            if(document.getElementById("nameOverlay") || document.getElementById("intro")) return;
+            if(document.getElementById("nameOverlay")?.style.display !== "none" || document.getElementById("intro")) return;
             clearTimeout(slideTimer); 
             startX = e.touches[0].clientX;
         });
 
         document.addEventListener("touchend", e => {
-            if(document.getElementById("nameOverlay") || document.getElementById("intro")) return;
+            if(document.getElementById("nameOverlay")?.style.display !== "none" || document.getElementById("intro")) return;
             let endX = e.changedTouches[0].clientX; 
             let diffX = startX - endX;
             if (diffX > 50 && current < slides.length - 1) { nextSlide(current + 1); } 
@@ -934,7 +948,7 @@
         });
 
         document.addEventListener("click", e => {
-            if(document.getElementById("nameOverlay") || document.getElementById("intro") || accepted) return;
+            if(document.getElementById("nameOverlay")?.style.display !== "none" || document.getElementById("intro") || accepted) return;
             playMusic();
             if(e.target.closest('button') || e.target.tagName.toLowerCase() === 'input') return; 
             
@@ -1128,6 +1142,19 @@
                         fill:"forwards"
                     });
 
+                    // ⏰ หยุดเวลาและแสดงเวลาคบกัน
+                    clearInterval(timerInterval);
+                    const now = new Date();
+                    const dateString = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+                    const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
+                    
+                    const timerDisplay = document.getElementById('timer-display');
+                    timerDisplay.innerHTML = `เราเป็นแฟนกันเมื่อ ${dateString} เวลา ${timeString} 💖`;
+                    timerDisplay.style.opacity = '1';
+                    timerDisplay.style.fontSize = 'clamp(0.85rem, 3vw, 1.1rem)';
+                    timerDisplay.style.transform = 'scale(1.1)';
+                    setTimeout(() => timerDisplay.style.transform = 'scale(1)', 300);
+
                     setTimeout(() => {
                         const finalSlide = document.getElementById('final-slide');
                         if (finalSlide) {
@@ -1154,7 +1181,7 @@
                         }
                     }, 2500);
 
-                    // 5️⃣ ข้อความ "และนี่คือจุดเริ่มต้น..."
+                    // 5️⃣ ขยับข้อความไปด้านบนสุด 
                     setTimeout(()=>{
                         let text = document.createElement("div");
                         text.innerHTML = "ว้ายๆๆ โดนผมจีบติดแล้วนะครับ 😳";
