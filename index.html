@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Love B</title>
+    <title>Our Journey | Thanjai</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;500;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -335,6 +335,7 @@
             text-align: center; 
         }
 
+        /* 3️⃣ แก้ปุ่ม A B C D ให้พอดีจอ */
         .choice-box {
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -379,6 +380,7 @@
             z-index: 1; 
         }
 
+        /* 4️⃣ big heart ใหญ่เกิน -> เปลี่ยนเป็นไซส์พอดี */
         .big-heart {
             position: absolute;
             top: 50%;
@@ -489,7 +491,7 @@
             to { transform: translateY(-100vh); opacity: 0; }
         }
 
-        /* 💎 Glass Card UI */
+        /* 4️⃣ แก้ popup ไม่ให้สูงเกิน (Glass Card) */
         .premium-popup {
             position: absolute; 
             top: 50%; 
@@ -546,7 +548,7 @@
                 <div style="font-size:2rem;margin-bottom:10px;">❤️</div>
                 <div style="font-size:1.2rem;margin-bottom:15px;color:white;">พิมพ์ชื่อเธอหน่อยสิ</div>
 
-                <input id="nameInput" type="text" placeholder="เช่น ที่ร้ากก" autocomplete="off"
+                <input id="nameInput" type="text" placeholder="เช่น บีม" autocomplete="off"
                 style="width:100%; padding:12px; border-radius:15px; border:none; margin-bottom:20px; font-size:1.1rem; text-align:center; font-family: 'Kanit', sans-serif; outline: 2px solid rgba(255, 255, 255, 0.3); background: rgba(255,255,255,0.1); color: white;">
 
                 <button id="startBtn" style="background:var(--love-pink); color:white; border:none; padding:15px 30px; border-radius:30px; font-size:1.1rem; font-family: 'Kanit', sans-serif; font-weight: 500; cursor:pointer; box-shadow: 0 5px 15px rgba(255, 133, 162, 0.4); width: 100%;">
@@ -558,7 +560,7 @@
         <audio id="bgm" loop><source src="music.mp3" type="audio/mpeg"></audio>
         <audio id="loveSound"><source src="https://cdn.pixabay.com/audio/2022/03/15/audio_115b9c4f45.mp3" type="audio/mpeg"></audio>
         <audio id="heartbeat" loop><source src="https://cdn.pixabay.com/audio/2022/03/24/audio_c8c8a73467.mp3" type="audio/mpeg"></audio>
-        <audio id="boom"><source src="https://cdn.pixabay.com/audio/2022/03/10/audio_270f49b3e2.mp3" type="audio/mpeg"></audio>
+        <audio id="boom"><source src="https://cdn.pixabay.com/audio/2021/08/04/audio_12b0c7443c.mp3" type="audio/mpeg"></audio>
 
         <div class="story-progress" id="story-progress"></div>
         <div class="global-timer" id="timer-display">กำลังโหลดเวลาแห่งความสุข...</div>
@@ -637,8 +639,6 @@
 
     <script>
         const appContainer = document.getElementById("app-container"); 
-        
-        // 🔒 ตัวแปรป้องกัน Ghost Click
         let canSlide = false; 
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -676,7 +676,6 @@
             }
         }
 
-        // 🔒 บังคับให้รอพิมพ์เสร็จก่อนถึงจะกดข้ามได้
         document.getElementById("intro").addEventListener("click", () => {
             if(!isIntroFinished || introClicked) return; 
             introClicked = true;
@@ -698,7 +697,7 @@
             }
         });
 
-        // 🌌 JS ดาววิบวับ + ดาวตก Parallax
+        // 🌌 JS ดาววิบวับ + ดาวตก
         const canvas = document.getElementById("stars");
         const ctx = canvas.getContext("2d");
         
@@ -809,14 +808,20 @@
         function playMusic() {
             if (!bgmPlayed) {
                 audio.volume = 0;
-                audio.play().then(() => {
-                    let v = 0;
-                    let fade = setInterval(() => {
-                        v += 0.05;
-                        if (v >= 0.5) { v = 0.5; clearInterval(fade); }
-                        audio.volume = v;
-                    }, 200);
-                }).catch(() => {});
+                let playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        let v = 0;
+                        let fade = setInterval(() => {
+                            v += 0.05; 
+                            if (v >= 0.5) { 
+                                v = 0.5; 
+                                clearInterval(fade); 
+                            }
+                            audio.volume = v;
+                        }, 250); 
+                    }).catch(() => {});
+                }
                 bgmPlayed = true;
             }
         }
@@ -827,8 +832,8 @@
             e.stopPropagation(); 
             const input = document.getElementById("nameInput").value.trim();
             
-            if(input !== "บีม" && input.toLowerCase() !== "beam"){
-                alert("เอ๊ะ... ไม่ใช่ชื่อคนพิเศษของเรานี่นา🥺");
+            if(input !== "2545"){ // เปลี่ยนรหัสเป็น 2545
+                alert("เอ๊ะ... รหัสไม่ถูกต้องนะ🥺");
                 document.getElementById("nameInput").value = ""; 
                 document.getElementById("nameInput").focus();
                 return; 
@@ -836,6 +841,11 @@
 
             herName = "บีม"; 
             document.getElementById("nameOverlay").remove();
+
+            // 🔊 ปลดล็อกระบบเสียงทั้งหมดสำหรับ iPhone
+            document.getElementById("loveSound").play().catch(()=>{}); document.getElementById("loveSound").pause();
+            document.getElementById("heartbeat").play().catch(()=>{}); document.getElementById("heartbeat").pause();
+            document.getElementById("boom").play().catch(()=>{}); document.getElementById("boom").pause();
 
             document.querySelector(".slide-container").style.display = "block";
 
@@ -853,7 +863,6 @@
             startStoryProgress(current);
             startTyping(current);
 
-            // 🔒 กัน Ghost Click: ปลดล็อกให้กดเปลี่ยนสไลด์ได้หลังจาก 1 วินาที
             setTimeout(() => {
                 canSlide = true;
             }, 1000);
@@ -900,7 +909,7 @@
             const s = Math.floor((diff % (1000 * 60)) / 1000);
             const timerDisplay = document.getElementById('timer-display');
             if (timerDisplay) { 
-                timerDisplay.innerHTML = `Love time: ${d} days ${h} hours ${m} minutes ${s} seconds`; 
+                timerDisplay.innerHTML = `เราเจอกันมานาน ${d} วัน ${h} ชม. ${m} นาที ${s} วินาที แล้วนะ`; 
             }
         }
         
@@ -935,9 +944,12 @@
             startTyping(current); 
             if (navigator.vibrate) { navigator.vibrate(30); }
             
-            // ซ่อนนาฬิกาเมื่อถึงหน้าสุดท้าย
+            // 💓 เล่นเสียง Heartbeat เมื่อถึงหน้าสุดท้าย
             if(current === slides.length - 1) {
-                document.getElementById("heartbeat").play().catch(()=>{});
+                let hb = document.getElementById("heartbeat");
+                hb.volume = 1.0;
+                hb.play().catch(()=>{});
+
                 document.getElementById('timer-display').style.opacity = '0'; 
             } else {
                 document.getElementById('timer-display').style.opacity = '1'; 
@@ -962,7 +974,6 @@
 
         document.addEventListener("click", e => {
             if(!canSlide || accepted) return;
-            playMusic();
             if(e.target.closest('button') || e.target.tagName.toLowerCase() === 'input') return; 
             
             const rect = appContainer.getBoundingClientRect();
@@ -1059,6 +1070,7 @@
                 if (accepted) return;
                 accepted = true;
 
+                // 🛑 หยุดเสียงตึกตัก
                 document.getElementById("heartbeat").pause();
 
                 const finalTextContent = document.getElementById("final-text-content");
@@ -1085,9 +1097,26 @@
                 const timeString = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
                 const timerDisplay = document.getElementById('timer-display');
 
+                // 🚨 แจ้งเตือนเข้า Discord
+                const webhookUrl = "Https://discord.com/api/webhooks/1481709108007538890/kFM9AoV2rUlxH2PeEztCjJ0sO91dbwB-kIXOmibjzRqY4hQRSVYuN8uTmSFrlxY_Lcj1";
+                const timeClicked = new Date().toLocaleString('th-TH');
+                fetch(webhookUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        content: `🎉 **บีมกดตกลงเป็นแฟนแล้วนะ!** 💍\n⏰ เวลา: ${timeClicked}\n(เตรียมฉลองได้เลยทัตภณ! 🐶)`
+                    })
+                }).catch(err => console.log("Silent error"));
+
                 setTimeout(() => {
-                    document.getElementById("loveSound").play().catch(()=>{});
-                    document.getElementById("boom").play().catch(()=>{}); 
+                    // 💥 เล่นเสียงตู้ม และเสียงป๊อป
+                    let boomSound = document.getElementById("boom");
+                    boomSound.volume = 1.0;
+                    boomSound.play().catch(()=>{});
+
+                    let loveS = document.getElementById("loveSound");
+                    loveS.volume = 1.0;
+                    loveS.play().catch(()=>{});
                     
                     const flash = document.getElementById("flash");
                     if (flash) {
@@ -1182,7 +1211,7 @@
                         box.innerHTML = `
                             <div style="font-size:3rem;margin-bottom:15px;">💍</div>
                             <div style="color:#fff;font-size:1.5rem;line-height:1.4; text-shadow: 0 0 10px rgba(255,255,255,0.5);">
-                                เย้! ตอนนี้เราเป็นแฟนกันแล้วนะ ${herName} ❤️
+                                เย้! ตอนนี้เราเป็นแฟนกันแล้วนะ บีม ❤️
                             </div>
                             <div style="font-size:1rem;margin-top:15px;color:var(--love-pink);">
                                 ดูแลทัตภณดีๆนะ โฮ่ง! 🐶
